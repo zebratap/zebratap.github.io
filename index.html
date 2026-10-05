@@ -1,0 +1,689 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Zebra Tap: your usual pint, any strength</title>
+<meta name="description" content="Zebra Tap takes the alcohol out at the tap, so pubs can pour every beer at full strength, halfway, or 0.0 from one keg.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --ink:#000000;--paper:#FFFFFF;--fog:#EDEDEB;--ghost:#F1F1EF;--rule:#CFCFCB;--mute:#5C5C59;--body:#2E2E2C;
+  --soft:#BDBDB9;--faint:#9A9A96;--dline:#3A3A38;--field:#8A8A87;
+  --display:"Big Shoulders Display","Arial Narrow","Helvetica Neue",sans-serif;
+  --text:"Hanken Grotesk","Helvetica Neue",Helvetica,Arial,sans-serif;
+  --pad:64px;--head:80px;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+/* The brand is black and white in both themes */
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#FFFFFF;--ink:#000000}}
+:root[data-theme="dark"]{--paper:#FFFFFF;--ink:#000000}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + var(--head));background:var(--paper)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+svg{max-width:100%}
+a{color:var(--ink)}a:hover{color:var(--mute)}
+button,input{font:inherit}
+:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.dark :focus-visible{outline-color:var(--paper)}
+.display{font-family:var(--display);font-weight:800;line-height:.92;margin:0}
+.wrap{padding-left:var(--pad);padding-right:var(--pad)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:56px;padding:0 28px;border-radius:999px;border:2px solid var(--ink);background:var(--ink);color:var(--paper);text-decoration:none;font-size:17px;font-weight:600;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.btn:hover{background:#333331;border-color:#333331;color:var(--paper)}
+.btn.ghost{background:var(--paper);color:var(--ink)}
+.btn.ghost:hover{background:var(--fog);color:var(--ink);border-color:var(--ink)}
+.btn.inv{background:var(--paper);color:var(--ink);border-color:var(--paper)}
+.btn.inv:hover{background:#DADAD6;border-color:#DADAD6;color:var(--ink)}
+.btn.sm{min-height:48px;padding:0 22px;font-size:16px}
+
+/* Header */
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;height:var(--head);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.94);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink)}
+.logo:hover{color:var(--ink)}
+.mark{width:auto;height:44px;aspect-ratio:694/752;color:var(--ink)}
+.flogo{display:flex;align-items:center;gap:14px}
+.flogo .mark{height:52px;color:var(--paper)}
+.intro .ilogo{width:auto;height:clamp(90px,14vw,130px);aspect-ratio:694/752;color:var(--paper);opacity:0;animation:word 1.5s ease forwards}
+.wordmark{font-family:var(--display);font-weight:800;font-size:28px;letter-spacing:.06em}
+header nav{display:flex;align-items:center;gap:32px;font-size:16px;font-weight:500}
+header nav a:not(.btn){text-decoration:none}
+
+/* Hero: scroll-driven pour */
+.hero-track{position:relative}
+.hero-stick{position:relative;overflow:hidden;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:48px;align-items:center;padding-top:56px;padding-bottom:72px}
+.bignum{position:absolute;right:3vw;bottom:2vh;z-index:0;font-family:var(--display);font-weight:900;font-size:clamp(220px,38vw,640px);line-height:.8;color:var(--ghost);pointer-events:none;user-select:none;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.hero-copy,.pour{position:relative;z-index:1}
+.hero h1{font-size:clamp(60px,7.4vw,112px);letter-spacing:-.005em}
+.hero h1 span{display:block}
+.feel{margin:28px 0 0;font-family:var(--display);font-weight:700;font-size:clamp(26px,2.6vw,36px);line-height:1.1}
+.lede{margin:20px 0 32px;max-width:540px;font-size:clamp(17px,1.4vw,19px);line-height:1.55;color:var(--body)}
+.ctas{display:flex;gap:12px;flex-wrap:wrap}
+.pour{display:flex;flex-direction:column;align-items:center;gap:18px}
+.glass{display:block;height:min(56vh,500px);width:auto;aspect-ratio:300/440;overflow:visible}
+.stripe{fill:none;stroke:var(--ink);stroke-linecap:round;transition:stroke-width .45s cubic-bezier(.2,.7,.2,1)}
+.scrollmode:not(.manual) .stripe{transition:stroke-width .12s linear}
+.flow{animation:flow 7s linear infinite}
+@keyframes flow{to{transform:translateX(150px)}}
+.readout{text-align:center;min-height:52px}
+.readout p{margin:0;font-size:16px;color:var(--mute)}
+.readout strong{font-family:var(--display);font-weight:800;font-size:30px;color:var(--ink);display:block;line-height:1.1}
+.seg{display:flex;gap:4px;padding:4px;background:var(--paper);border:2px solid var(--ink);border-radius:999px}
+.seg button{min-width:96px;min-height:48px;padding:0 18px;border:0;border-radius:999px;background:transparent;color:var(--ink);font-size:17px;font-weight:600;cursor:pointer;transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--paper)}
+.seg button:not([aria-pressed="true"]):hover{background:var(--fog)}
+.hint{margin:0;font-size:14px;color:var(--mute);text-align:center}
+
+/* Seams: zebra stripes between black and white */
+.seam{display:block;line-height:0;background:var(--paper)}
+.seam svg{display:block;width:100%;height:140px}
+.seam.up svg{transform:scaleY(-1)}
+.seam.flip svg{transform:scaleX(-1)}
+.seam.up.flip svg{transform:scale(-1,-1)}
+
+/* Sections */
+.block{padding-top:112px;padding-bottom:112px}
+.dark{background:var(--ink);color:var(--paper)}
+.dark a{color:var(--paper)}
+h2.display{font-size:clamp(46px,5.4vw,76px)}
+.intro-p{margin:24px 0 0;max-width:620px;font-size:19px;line-height:1.55;color:var(--mute)}
+.dark .intro-p{color:var(--soft)}
+
+/* Problem: uneven stats */
+.stats{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:72px;margin-top:72px;align-items:end}
+.hero-stat .n{font-family:var(--display);font-weight:900;font-size:clamp(110px,15vw,230px);line-height:.82;letter-spacing:-.01em}
+.hero-stat p{margin:24px 0 10px;max-width:560px;font-size:clamp(20px,2vw,26px);line-height:1.35}
+.side-stats{display:grid;gap:36px}
+.side-stats .fact{border-top:1px solid var(--dline);padding-top:22px}
+.side-stats .n{font-family:var(--display);font-weight:800;font-size:56px;line-height:1}
+.fact p{margin:10px 0 8px;font-size:17px;line-height:1.5;color:#E4E4E0}
+small.src{font-size:14px;color:var(--faint)}
+
+/* Why zebra */
+.why{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:72px;align-items:end}
+.why .striped{margin:0;font-family:var(--display);font-weight:900;font-size:clamp(72px,11vw,168px);line-height:.86;color:var(--ink);
+  background:repeating-linear-gradient(-32deg,#000 0 13px,#fff 13px 19px);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.why p{margin:0 0 18px;font-size:19px;line-height:1.55;color:var(--body);max-width:520px}
+.night{list-style:none;margin:72px 0 0;padding:0;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));border-top:2px solid var(--ink)}
+.night li{display:flex;flex-direction:column;gap:6px;padding:24px 16px 0 0}
+.night svg{margin-bottom:8px}
+.night .t{font-family:var(--display);font-weight:800;font-size:26px;line-height:1}
+.night .d{font-size:15px;color:var(--mute)}
+.night-cap{margin:28px 0 0;font-size:16px;color:var(--mute);max-width:620px}
+
+/* How it works */
+.diag{display:block;width:100%;height:auto;margin-top:56px}
+.diag.tall{display:none;max-width:420px;margin-left:auto;margin-right:auto}
+.flowline{stroke-dasharray:10 12;animation:dash 1.4s linear infinite}
+.flowline.alt{animation-duration:2.2s}
+@keyframes dash{to{stroke-dashoffset:-44}}
+.note{margin:40px 0 0;font-size:14px;color:var(--faint)}
+
+/* Compare */
+.table-wrap{margin-top:56px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+table{width:100%;min-width:720px;border-collapse:collapse;font-size:17px}
+th,td{text-align:left;padding:20px 20px;border-bottom:1px solid var(--rule);vertical-align:top;line-height:1.4}
+thead th{font-size:15px;font-weight:600;color:var(--mute);border-bottom:2px solid var(--ink)}
+tbody th{font-weight:600;width:24%}
+td{color:var(--body)}
+.zt-col{background:var(--ink);color:var(--paper) !important;font-weight:600}
+thead .zt-col{font-family:var(--display);font-weight:800;font-size:26px;letter-spacing:.04em;color:var(--paper)}
+tbody tr:last-child .zt-col{border-bottom-color:var(--ink)}
+.zt-col + th, .zt-col + td{padding-left:28px}
+
+/* Markets */
+.markets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:40px;margin-top:64px}
+.market{border-top:1px solid var(--dline);padding-top:22px}
+.market h3{margin:0 0 14px;font-size:15px;font-weight:600;color:var(--soft)}
+.market .n{font-family:var(--display);font-weight:800;font-size:clamp(52px,5vw,72px);line-height:1}
+.market p{margin:12px 0 8px;font-size:17px;line-height:1.5}
+.caveat{margin:40px 0 0;font-size:14px;color:var(--faint)}
+
+/* Join */
+.joinrule{border-top:1px solid var(--rule);margin-left:var(--pad);margin-right:var(--pad);padding-left:0;padding-right:0}
+.join{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,560px);gap:88px;align-items:start}
+.join .seg{display:inline-flex;margin:32px 0}
+.join .seg button{min-width:0;padding:0 24px}
+.pitch p{margin:0 0 22px;max-width:560px;font-size:19px;line-height:1.55;color:var(--body)}
+.ticks{list-style:none;margin:0;padding:0;display:grid;gap:14px;font-size:18px;line-height:1.45}
+.ticks li{display:flex;gap:14px;align-items:flex-start}
+.ticks svg{flex-shrink:0;margin-top:2px}
+.scene{display:block;width:100%;max-width:520px;height:auto;margin-top:48px}
+.card{background:var(--fog);border-radius:6px;padding:48px}
+.card h3{margin:0;font-size:28px;font-weight:700}
+.card .sub{margin:8px 0 24px;font-size:16px;line-height:1.5;color:var(--mute)}
+.fields{display:grid;gap:20px}
+.row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.field{display:grid;gap:8px}
+.field label{font-size:15px;font-weight:600}
+.field input{height:52px;width:100%;padding:0 16px;font-size:17px;border:1.5px solid var(--field);border-radius:4px;background:var(--paper);color:var(--ink);-webkit-appearance:none;appearance:none}
+.field input:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 2px var(--ink)}
+.field input[aria-invalid="true"]{border-color:#B3261E}
+.err{margin:0;font-size:14px;color:#B3261E}
+.card .btn{width:100%;margin-top:4px}
+.small{margin:0;font-size:14px;line-height:1.5;color:var(--mute)}
+.done{display:grid;gap:18px;justify-items:start;padding:12px 0}
+.done h3{margin:0}
+.done p{margin:0;font-size:17px;line-height:1.5;color:var(--mute)}
+[hidden]{display:none !important}
+
+/* Instagram + footer */
+.ig{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,520px);gap:80px;align-items:center;padding-top:96px;padding-bottom:96px}
+.ig p{margin:24px 0 32px;max-width:520px;font-size:19px;line-height:1.55;color:var(--soft)}
+.ig svg.art{width:100%;height:auto}
+footer{padding-top:24px;padding-bottom:56px;display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+footer p{margin:10px 0 0;font-size:15px;color:var(--faint)}
+footer nav{display:flex;gap:28px;font-size:15px}
+
+/* Intro: short, first visit only */
+.intro{position:fixed;inset:0;z-index:100;background:var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:32px;animation:out .3s ease 1.35s forwards}
+.intro .frame{width:min(300px,64vw);aspect-ratio:440/260;background:var(--paper);overflow:hidden}
+.intro .frame svg{display:block;width:100%;height:100%}
+.intro .skip{position:absolute;top:calc(env(safe-area-inset-top,0px) + 20px);right:20px;min-height:44px;padding:0 18px;background:transparent;color:var(--paper);border:1px solid var(--mute);border-radius:999px;font-size:15px;cursor:pointer}
+.draw{fill:none;stroke-width:22px;stroke-linecap:round;stroke-dasharray:520;stroke-dashoffset:520;animation:draw 1.3s cubic-bezier(.65,0,.25,1) forwards}
+.bottle{fill:var(--paper);stroke:var(--ink);stroke-width:3px;opacity:0;transform-box:fill-box;transform-origin:50% 100%;animation:bottle 1.45s ease forwards}
+.intro .word{font-family:var(--display);font-weight:800;font-size:clamp(32px,4vw,42px);letter-spacing:.08em;color:var(--paper);opacity:0;animation:word 1.5s ease forwards}
+@keyframes draw{0%{stroke-dashoffset:520}40%,62%{stroke-dashoffset:0}100%{stroke-dashoffset:-520}}
+@keyframes bottle{0%,32%{opacity:0;transform:translateY(8px) scale(.96)}45%,68%{opacity:1;transform:none}85%,100%{opacity:0}}
+@keyframes word{0%,20%{opacity:0}38%,85%{opacity:1}100%{opacity:0}}
+@keyframes out{to{opacity:0;visibility:hidden}}
+
+@media (prefers-reduced-motion:reduce){
+  .intro{display:none}
+  .flow,.flowline{animation:none}
+  .stripe,.seg button,.btn{transition:none}
+}
+
+/* Tablet */
+@media (max-width:1080px){
+  :root{--pad:40px}
+  .hero-stick{grid-template-columns:minmax(0,1fr) auto;gap:32px}
+  .stats,.why,.join,.ig{grid-template-columns:minmax(0,1fr)}
+  .stats{gap:48px}
+  .why{gap:32px}
+  .join{gap:48px}
+  .markets{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .night{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:28px}
+  header nav a.navtext{display:none}
+}
+/* Phone */
+@media (max-width:760px){
+  :root{--pad:20px;--head:68px}
+  .wordmark{font-size:24px}
+  .logo .mark{height:36px}
+  .hero-stick{grid-template-columns:minmax(0,1fr);gap:40px;padding-top:36px;padding-bottom:40px}
+  .bignum{font-size:72vw;bottom:auto;top:44%;right:-4vw}
+  .ctas{flex-direction:column}
+  .ctas .btn{width:100%}
+  .glass{height:340px}
+  .seg button{min-width:84px;padding:0 12px;font-size:16px}
+  .seam svg{height:80px}
+  .block{padding-top:64px;padding-bottom:64px}
+  .intro-p,.why p,.pitch p,.ig p{font-size:17px}
+  .side-stats .n{font-size:48px}
+  .night li{padding-right:8px}
+  .night .t{font-size:22px}
+  .diag.wide{display:none}
+  .diag.tall{display:block}
+  .markets{grid-template-columns:minmax(0,1fr);gap:28px;margin-top:40px}
+  .join .seg{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%;margin:28px 0}
+  .join .seg button{padding:0 8px;font-size:15px}
+  .card{padding:28px 20px}
+  .row2{grid-template-columns:minmax(0,1fr)}
+  th,td{padding:16px 14px;font-size:16px}
+  .ig{padding-top:64px;padding-bottom:64px;gap:32px}
+  .ig svg.art{order:-1;max-width:360px}
+  .ig .btn{width:100%}
+  footer{flex-direction:column}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="zt-logo" viewBox="0 0 694 752"><path fill="currentColor" fill-rule="evenodd" d="M483 17 L456 34 L436 63 L427 57 L407 6 L363 43 L257 71 L259 120 L227 87 L151 144 L172 177 L171 179 L137 165 L131 165 L54 272 L6 447 L120 590 L279 745 L380 467 L446 476 L544 521 L558 555 L599 568 L637 561 L667 544 L673 535 L677 522 L687 465 L661 403 L576 294 L540 221 L473 166 L521 133 L490 91 L494 48ZM120 334 L123 340 L151 510 L297 620 L269 696 L143 574 L38 443ZM205 235 L243 424 L321 553 L308 589 L178 491 L146 301ZM194 214 L121 293 L47 390 L48 379 L73 287 L137 196 L143 191ZM232 210 L280 169 L310 151 L312 154 L308 169 L351 222 L417 156 L452 173 L527 236 L560 303 L632 395 L618 391 L517 289 L491 255 L434 264 L434 266 L463 302 L507 299 L607 399 L603 466 L553 486 L549 498 L545 500 L459 459 L480 398 L568 390 L543 368 L461 376 L436 453 L377 445 L374 442 L438 320 L392 211 L376 235 L412 318 L356 420 L324 383 L317 255 L300 271 L301 393 L356 457 L338 509 L334 515 L271 410ZM225 117 L261 156 L211 196 L182 150ZM431 85 L472 104 L490 128 L453 152 L426 139 L425 128ZM334 73 L335 77 L322 119 L284 141 L279 89ZM475 41 L480 53 L477 82 L452 70ZM398 41 L411 71 L404 137 L353 191 L331 163 L357 77Z"/></symbol></svg>
+
+<div class="intro dark" id="intro" aria-hidden="true">
+  <button type="button" class="skip" id="skip">Skip intro</button>
+  <div class="frame"><svg viewBox="0 0 440 260" aria-hidden="true" id="introSvg"></svg></div>
+  <svg class="ilogo" viewBox="0 0 694 752" aria-hidden="true"><use href="#zt-logo"/></svg>
+  <div class="word">ZEBRA TAP</div>
+</div>
+<script>
+(function(){var seen=false,reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+try{seen=sessionStorage.getItem('zt-intro')==='1';sessionStorage.setItem('zt-intro','1');}catch(e){}
+if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChild(el);}})();
+</script>
+
+<header class="wrap">
+  <a class="logo" href="#top" aria-label="Zebra Tap home">
+    <svg class="mark" viewBox="0 0 694 752" aria-hidden="true"><use href="#zt-logo"/></svg>
+    <span class="wordmark">ZEBRA TAP</span>
+  </a>
+  <nav aria-label="Main">
+    <a class="navtext" href="#how">How it works</a>
+    <a class="navtext" href="#compare">Compare</a>
+    <a class="navtext" href="#why">Why zebra</a>
+    <a class="navtext" href="#join" data-mode="drinker">For drinkers</a>
+    <a class="btn sm" href="#join" data-mode="pub">Join the pilot</a>
+  </nav>
+</header>
+
+<main id="top">
+  <section class="hero-track hero" id="heroTrack" aria-labelledby="hero-title">
+    <div class="hero-stick wrap" id="heroStick">
+      <div class="bignum" id="bignum" aria-hidden="true">2.5</div>
+      <div class="hero-copy">
+        <h1 id="hero-title" class="display"><span>Your usual pint.</span><span>Any strength.</span></h1>
+        <p class="feel">Stay out for every round. Wake up fine.</p>
+        <p class="lede">Zebra Tap sits between the keg and the tap and takes the alcohol out as you pour. The pub keeps one keg of each beer. You order it at full strength, halfway, or 0.0.</p>
+        <div class="ctas">
+          <a class="btn" href="#join" data-mode="pub">Join the pub pilot</a>
+          <a class="btn ghost" href="#join" data-mode="drinker">Nominate your local</a>
+        </div>
+      </div>
+      <div class="pour">
+        <svg class="glass" id="glass" viewBox="0 0 300 440" role="img" aria-labelledby="glassLabel">
+          <title id="glassLabel">A pint glass drawn in black and white stripes. The black stripes are the alcohol.</title>
+          <defs><clipPath id="glassClip"><path id="glassShape" d="M14 8 L286 8 L278 70 Q294 96 276 124 L252 424 Q251 434 240 434 L60 434 Q49 434 48 424 L24 124 Q6 96 22 70 Z"/></clipPath></defs>
+          <g clip-path="url(#glassClip)">
+            <rect x="0" y="0" width="300" height="440" fill="#fff"/>
+            <g transform="rotate(-8 150 260)"><g class="flow" id="stripes"></g></g>
+            <path d="M0 0 H300 V66 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 Z" fill="#fff"/>
+            <path d="M300 66 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0 a15 15 0 0 1 -30 0" fill="none" stroke="#000" stroke-width="2"/>
+            <circle cx="92" cy="40" r="5" fill="none" stroke="#000" stroke-width="1.5"/><circle cx="196" cy="32" r="3.5" fill="none" stroke="#000" stroke-width="1.5"/><circle cx="232" cy="48" r="4.5" fill="none" stroke="#000" stroke-width="1.5"/>
+            <rect x="46" y="120" width="12" height="270" rx="6" fill="#fff" opacity=".3" transform="rotate(-4 52 255)"/>
+          </g>
+          <use href="#glassShape" fill="none" stroke="#000" stroke-width="3.5" stroke-linejoin="round"/>
+        </svg>
+        <div class="readout"><p><strong id="abv">2.5%</strong><span id="abvWord">Same 5.0% lager keg, poured at 2.5%.</span></p></div>
+        <div class="sr" aria-live="polite" id="live"></div>
+        <div class="seg" role="group" aria-label="Choose the strength of the pour" id="strength">
+          <button type="button" aria-pressed="false" data-t="0">0.0%</button>
+          <button type="button" aria-pressed="true" data-t="0.5">2.5%</button>
+          <button type="button" aria-pressed="false" data-t="1">5.0%</button>
+        </div>
+        <p class="hint" id="hint">Black stripes are the alcohol. Pick how many you want.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="seam down" aria-hidden="true"><svg viewBox="0 0 1440 140" preserveAspectRatio="none">
+<path d="M0 116 C300 102 560 130 820 116 S1260 102 1440 116 L1440 141 L0 141 Z" fill="#000"/>
+<g fill="none" stroke="#000" stroke-linecap="round" vector-effect="non-scaling-stroke">
+<path d="M-10 92 C300 76 560 108 820 92 S1260 78 1450 92" stroke-width="20" vector-effect="non-scaling-stroke"/>
+<path d="M-10 66 C260 52 600 82 860 66 S1240 54 1450 66" stroke-width="13" vector-effect="non-scaling-stroke"/>
+<path d="M-10 43 C320 30 560 58 800 43 S1280 32 1450 43" stroke-width="7" vector-effect="non-scaling-stroke"/>
+<path d="M-10 24 C280 14 620 36 880 24 S1220 14 1450 24" stroke-width="3" vector-effect="non-scaling-stroke"/>
+</g></svg></div>
+  <section id="how" class="block dark wrap" aria-labelledby="how-title">
+    <h2 id="how-title" class="display">One keg. Two ways out of the tap.</h2>
+    <p class="intro-p">The unit fits in the line between keg and tap. Nothing changes about how the beer is brewed, delivered or stored.</p>
+    <svg class="diag wide" viewBox="0 0 1200 460" role="img" aria-label="Diagram: beer flows from your usual keg to a valve. Route 1 goes straight to the tap at full strength. Route 2 goes through the Zebra Tap unit, which takes the alcohol out, adds back water and CO2, and corrects the flavour, then goes to the same tap. Out comes one fresh draught pint.">
+<g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<rect x="40" y="170" width="120" height="150" rx="16"/><path d="M40 205 H160 M40 285 H160"/><path d="M84 170 V156 H116 V170"/>
+<path class="flowline" d="M160 245 H330"/>
+<circle cx="352" cy="245" r="22"/><path d="M337 230 L367 260 M367 230 L337 260"/>
+<path class="flowline" d="M352 223 V110 H1022 V150"/>
+<path class="flowline alt" d="M352 267 V372 H470"/>
+<rect x="470" y="310" width="380" height="124" rx="10" fill="#1E1E1D"/>
+<path class="flowline alt" d="M850 372 H940 V330 H990"/>
+<rect x="990" y="150" width="64" height="250" rx="8"/>
+<path d="M1054 210 H1106 V234"/>
+<path d="M1082 310 H1132 L1127 400 H1087 Z"/>
+<path d="M960 400 H1180"/>
+</g>
+<g stroke="#fff" stroke-width="7" stroke-linecap="round"><path d="M1088 340 Q1100 334 1110 340 T1128 338"/><path d="M1088 366 Q1100 360 1110 366 T1127 364"/></g>
+<g fill="#fff" font-family="Hanken Grotesk, Helvetica, sans-serif">
+<text x="100" y="350" text-anchor="middle" font-size="17" font-weight="600">Your usual keg</text>
+<text x="384" y="276" font-size="15" fill="#BDBDB9">Valve</text>
+<text x="600" y="92" text-anchor="middle" font-size="18" font-weight="600">Route 1: straight to the tap, full strength</text>
+<text x="660" y="296" text-anchor="middle" font-size="18" font-weight="600">Route 2: through the Zebra Tap unit</text>
+<text x="533" y="378" text-anchor="middle" font-size="16">Alcohol out</text>
+<text x="660" y="378" text-anchor="middle" font-size="16">Water + CO₂ back</text>
+<text x="790" y="378" text-anchor="middle" font-size="16">Flavour fixed</text>
+<text x="1070" y="436" text-anchor="middle" font-size="17" font-weight="600">One fresh draught pint</text>
+</g>
+<g stroke="#5C5C59" stroke-width="1.5"><path d="M596 346 V410 M724 346 V410"/></g>
+</svg>
+    <svg class="diag tall" viewBox="0 0 360 780" role="img" aria-label="Diagram: beer flows from your usual keg to a valve. Route 1 goes straight to the tap at full strength. Route 2 goes through the Zebra Tap unit, which takes the alcohol out, adds back water and CO2, and corrects the flavour, then goes to the same tap. Out comes one fresh draught pint.">
+<g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<rect x="130" y="20" width="100" height="120" rx="14"/><path d="M130 48 H230 M130 112 H230"/>
+<path class="flowline" d="M180 140 V190"/>
+<circle cx="180" cy="210" r="20"/><path d="M166 196 L194 224 M194 196 L166 224"/>
+<path class="flowline" d="M160 210 H40 V600 H150"/>
+<path class="flowline alt" d="M200 210 H290 V270"/>
+<rect x="190" y="270" width="150" height="220" rx="10" fill="#1E1E1D"/>
+<path class="flowline alt" d="M290 490 V640 H210"/>
+<rect x="150" y="560" width="60" height="140" rx="8"/>
+<path d="M180 700 V720"/>
+<path d="M156 722 H204 L199 766 H161 Z"/>
+</g>
+<g stroke="#fff" stroke-width="6" stroke-linecap="round"><path d="M160 740 Q172 735 180 740 T200 738"/><path d="M161 756 Q172 751 180 756 T199 754"/></g>
+<g fill="#fff" font-family="Hanken Grotesk, Helvetica, sans-serif">
+<text x="262" y="170" text-anchor="middle" font-size="14" font-weight="600">Your usual keg</text>
+<text x="52" y="330" font-size="15" font-weight="600">Route 1</text>
+<text x="52" y="350" font-size="14" fill="#BDBDB9">Full</text>
+<text x="52" y="368" font-size="14" fill="#BDBDB9">strength</text>
+<text x="265" y="300" text-anchor="middle" font-size="15" font-weight="600">Route 2</text>
+<text x="265" y="350" text-anchor="middle" font-size="14">Alcohol out</text>
+<text x="265" y="400" text-anchor="middle" font-size="14">Water + CO₂</text>
+<text x="265" y="418" text-anchor="middle" font-size="14">back</text>
+<text x="265" y="460" text-anchor="middle" font-size="14">Flavour fixed</text>
+<text x="96" y="690" text-anchor="middle" font-size="14" font-weight="600">One fresh</text>
+<text x="96" y="708" text-anchor="middle" font-size="14" font-weight="600">draught pint</text>
+</g>
+</svg>
+    <p class="note">Built on patent DE102009006843A1 (Marcus Hertel), which is in the public domain.</p>
+  </section>
+  <div class="seam up" aria-hidden="true"><svg viewBox="0 0 1440 140" preserveAspectRatio="none">
+<path d="M0 116 C300 102 560 130 820 116 S1260 102 1440 116 L1440 141 L0 141 Z" fill="#000"/>
+<g fill="none" stroke="#000" stroke-linecap="round" vector-effect="non-scaling-stroke">
+<path d="M-10 92 C300 76 560 108 820 92 S1260 78 1450 92" stroke-width="20" vector-effect="non-scaling-stroke"/>
+<path d="M-10 66 C260 52 600 82 860 66 S1240 54 1450 66" stroke-width="13" vector-effect="non-scaling-stroke"/>
+<path d="M-10 43 C320 30 560 58 800 43 S1280 32 1450 43" stroke-width="7" vector-effect="non-scaling-stroke"/>
+<path d="M-10 24 C280 14 620 36 880 24 S1220 14 1450 24" stroke-width="3" vector-effect="non-scaling-stroke"/>
+</g></svg></div>
+
+  <section id="compare" class="block wrap" aria-labelledby="compare-title">
+    <h2 id="compare-title" class="display">Draught 0.0 already exists. One beer at a time.</h2>
+    <p class="intro-p">Brands like Heineken 0.0 and Guinness 0.0 are expanding on tap. Each one is a single beer with its own keg and line.</p>
+    <div class="table-wrap" tabindex="0" role="region" aria-label="Comparison table, scrolls sideways on small screens">
+      <table>
+        <thead><tr><th scope="col"><span class="sr">Feature</span></th><th scope="col" class="zt-col">ZEBRA TAP</th><th scope="col">Draught 0.0 brands</th><th scope="col">Bottled 0.0</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Alcohol-free options</th><td class="zt-col">Every beer on tap</td><td>One beer per tap line</td><td>Whatever is in the fridge</td></tr>
+          <tr><th scope="row">Served as</th><td class="zt-col">Fresh draught</td><td>Draught</td><td>Bottle or can</td></tr>
+          <tr><th scope="row">Strengths</th><td class="zt-col">0.0, halfway or full</td><td>0.0 only</td><td>0.0 only</td></tr>
+          <tr><th scope="row">Extra stock for the pub</th><td class="zt-col">None, it uses the kegs you have</td><td>A separate keg and tap line for each</td><td>Fridge space and stock that goes out of date</td></tr>
+          <tr><th scope="row">In the glass</th><td class="zt-col">The same beer as your friends</td><td>A different beer from your friends'</td><td>Clearly a different drink</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="seam down flip" aria-hidden="true"><svg viewBox="0 0 1440 140" preserveAspectRatio="none">
+<path d="M0 116 C300 102 560 130 820 116 S1260 102 1440 116 L1440 141 L0 141 Z" fill="#000"/>
+<g fill="none" stroke="#000" stroke-linecap="round" vector-effect="non-scaling-stroke">
+<path d="M-10 92 C300 76 560 108 820 92 S1260 78 1450 92" stroke-width="20" vector-effect="non-scaling-stroke"/>
+<path d="M-10 66 C260 52 600 82 860 66 S1240 54 1450 66" stroke-width="13" vector-effect="non-scaling-stroke"/>
+<path d="M-10 43 C320 30 560 58 800 43 S1280 32 1450 43" stroke-width="7" vector-effect="non-scaling-stroke"/>
+<path d="M-10 24 C280 14 620 36 880 24 S1220 14 1450 24" stroke-width="3" vector-effect="non-scaling-stroke"/>
+</g></svg></div>
+  <section id="problem" class="block dark wrap" aria-labelledby="problem-title">
+    <h2 id="problem-title" class="display">Why it matters at the bar.</h2>
+    <p class="intro-p">At most pubs, the 0.0 option is a bottle from the back fridge. People notice, and so do the pub's takings.</p>
+    <div class="stats">
+      <div class="hero-stat">
+        <div class="n">About half</div>
+        <p>of occasional no/low drinkers sometimes order alcohol anyway, just to avoid being judged.</p>
+        <small class="src">Heineken UK and University of Oxford study</small>
+      </div>
+      <div class="side-stats">
+        <div class="fact"><div class="n">31%</div><p>of UK consumers have left a venue disappointed by its low and no-alcohol choice. That's a round, and often a whole night, the pub loses.</p><small class="src">UK consumer research, via trade press</small></div>
+      </div>
+    </div>
+  </section>
+  <div class="seam up flip" aria-hidden="true"><svg viewBox="0 0 1440 140" preserveAspectRatio="none">
+<path d="M0 116 C300 102 560 130 820 116 S1260 102 1440 116 L1440 141 L0 141 Z" fill="#000"/>
+<g fill="none" stroke="#000" stroke-linecap="round" vector-effect="non-scaling-stroke">
+<path d="M-10 92 C300 76 560 108 820 92 S1260 78 1450 92" stroke-width="20" vector-effect="non-scaling-stroke"/>
+<path d="M-10 66 C260 52 600 82 860 66 S1240 54 1450 66" stroke-width="13" vector-effect="non-scaling-stroke"/>
+<path d="M-10 43 C320 30 560 58 800 43 S1280 32 1450 43" stroke-width="7" vector-effect="non-scaling-stroke"/>
+<path d="M-10 24 C280 14 620 36 880 24 S1220 14 1450 24" stroke-width="3" vector-effect="non-scaling-stroke"/>
+</g></svg></div>
+
+  <section id="why" class="block wrap" aria-labelledby="why-title">
+    <h2 id="why-title" class="sr">Why the name Zebra Tap</h2>
+    <div class="why">
+      <p class="striped" aria-hidden="true">Zebra striping</p>
+      <div>
+        <p><strong>Zebra striping</strong> is something people already do: alternate a beer with an alcohol-free drink through the night. It's one of the drinking habits growing fastest in France.</p>
+        <p>The name comes from that. Black stripes for the rounds with alcohol, white stripes for the ones without.</p>
+      </div>
+    </div>
+    <ol class="night" aria-label="A zebra-striped night out">
+      <li><svg width="40" height="60" viewBox="0 0 40 60" aria-hidden="true"><defs><clipPath id="np0"><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z"/></clipPath></defs><g clip-path="url(#np0)" stroke="#000" stroke-width="5" stroke-linecap="round" fill="none"><path d="M-2 20 Q12 15 20 20 T42 18"/><path d="M-2 31 Q12 26 20 31 T42 29"/><path d="M-2 42 Q12 37 20 42 T42 40"/><path d="M-2 53 Q12 48 20 53 T42 51"/></g><path d="M5 11 Q9 14 13 11 T21 11 T29 11 T35 11" fill="none" stroke="#000" stroke-width="1.5"/><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/></svg><span class="t">8 pm</span><span class="d">Lager 5.0%</span></li>
+<li><svg width="40" height="60" viewBox="0 0 40 60" aria-hidden="true"><defs><clipPath id="np1"><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z"/></clipPath></defs><path d="M5 11 Q9 14 13 11 T21 11 T29 11 T35 11" fill="none" stroke="#000" stroke-width="1.5"/><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/></svg><span class="t">9 pm</span><span class="d">Lager 0.0%</span></li>
+<li><svg width="40" height="60" viewBox="0 0 40 60" aria-hidden="true"><defs><clipPath id="np2"><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z"/></clipPath></defs><g clip-path="url(#np2)" stroke="#000" stroke-width="5" stroke-linecap="round" fill="none"><path d="M-2 20 Q12 15 20 20 T42 18"/><path d="M-2 31 Q12 26 20 31 T42 29"/><path d="M-2 42 Q12 37 20 42 T42 40"/><path d="M-2 53 Q12 48 20 53 T42 51"/></g><path d="M5 11 Q9 14 13 11 T21 11 T29 11 T35 11" fill="none" stroke="#000" stroke-width="1.5"/><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/></svg><span class="t">10 pm</span><span class="d">IPA 5.0%</span></li>
+<li><svg width="40" height="60" viewBox="0 0 40 60" aria-hidden="true"><defs><clipPath id="np3"><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z"/></clipPath></defs><path d="M5 11 Q9 14 13 11 T21 11 T29 11 T35 11" fill="none" stroke="#000" stroke-width="1.5"/><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/></svg><span class="t">11 pm</span><span class="d">IPA 0.0%</span></li>
+<li><svg width="40" height="60" viewBox="0 0 40 60" aria-hidden="true"><defs><clipPath id="np4"><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z"/></clipPath></defs><g clip-path="url(#np4)" stroke="#000" stroke-width="5" stroke-linecap="round" fill="none"><path d="M-2 20 Q12 15 20 20 T42 18"/><path d="M-2 31 Q12 26 20 31 T42 29"/><path d="M-2 42 Q12 37 20 42 T42 40"/><path d="M-2 53 Q12 48 20 53 T42 51"/></g><path d="M5 11 Q9 14 13 11 T21 11 T29 11 T35 11" fill="none" stroke="#000" stroke-width="1.5"/><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/></svg><span class="t">Midnight</span><span class="d">Stout 5.0%</span></li>
+<li><svg width="40" height="60" viewBox="0 0 40 60" aria-hidden="true"><defs><clipPath id="np5"><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z"/></clipPath></defs><path d="M5 11 Q9 14 13 11 T21 11 T29 11 T35 11" fill="none" stroke="#000" stroke-width="1.5"/><path d="M4 3 H36 L32 57 Q31.5 59 30 59 H10 Q8.5 59 8 57 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/></svg><span class="t">1 am</span><span class="d">Stout 0.0%</span></li>
+    </ol>
+    <p class="night-cap">Today, the white stripes usually mean switching to a bottle or a soft drink. With Zebra Tap, every round is the same beer.</p>
+  </section>
+
+  <section id="join" class="block join wrap joinrule" aria-labelledby="join-title">
+    <div>
+      <h2 id="join-title" class="display">Get Zebra Tap at your bar.</h2>
+      <div class="seg" role="group" aria-label="Who are you?" id="modeSeg">
+        <button type="button" aria-pressed="true" data-mode-btn="pub">I run a pub or bar</button>
+        <button type="button" aria-pressed="false" data-mode-btn="drinker">I drink at one</button>
+      </div>
+      <div class="pitch" data-for="pub">
+        <p>We're looking for our first 10 pilot venues. You keep your kegs, your breweries and your tap lines. We install the unit and look after it.</p>
+        <ul class="ticks"><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Every beer you pour gets a 0.0 version</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>No separate alcohol-free kegs taking up cellar space</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>No slow-selling 0.0 stock going out of date</span></li></ul>
+      </div>
+      <div class="pitch" data-for="drinker" hidden>
+        <p>Tell us where you drink. Every nomination goes on our map of pubs people want Zebra Tap in, and we take that list to the pub.</p>
+        <ul class="ticks"><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Order the same beer as your friends, at the strength you want</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A fresh draught pint instead of a bottle from the fridge</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Zebra-stripe your night without switching drinks</span></li></ul>
+      </div>
+      <svg class="scene" viewBox="0 0 560 390" role="img" aria-label="Line drawing of a pub bar: a tap tower, three pints on the counter at different strengths, and a chalkboard that reads Every beer, any strength.">
+<g fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<path d="M130 0 V38"/><path d="M104 38 H156 L172 66 H88 Z" fill="#000"/><path d="M118 80 L110 94 M130 82 V98 M142 80 L150 94" stroke-width="2"/>
+<path d="M300 0 V26"/><path d="M280 26 H320 L332 48 H268 Z" fill="#000"/>
+</g>
+<rect x="352" y="56" width="180" height="112" rx="4" fill="#000"/>
+<text x="442" y="92" text-anchor="middle" fill="#fff" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="700" font-size="18" letter-spacing="1">TONIGHT</text>
+<text x="442" y="124" text-anchor="middle" fill="#fff" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="800" font-size="26">Every beer.</text>
+<text x="442" y="152" text-anchor="middle" fill="#fff" font-family="Big Shoulders Display, Arial Narrow, sans-serif" font-weight="800" font-size="26">Any strength.</text>
+<g fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<rect x="70" y="186" width="150" height="18" rx="3" fill="#000"/>
+<path d="M145 204 V290"/><path d="M125 290 H165"/>
+<path d="M92 204 V218 H100 V204 M141 204 V218 H149 V204 M190 204 V218 H198 V204"/>
+<rect x="89" y="138" width="14" height="48" rx="4"/>
+<rect x="138" y="138" width="14" height="48" rx="4" fill="#000"/>
+<rect x="187" y="138" width="14" height="48" rx="4"/>
+</g>
+<g stroke="#fff" stroke-width="2.5" stroke-linecap="round"><path d="M140 150 L150 146 M140 162 L150 158 M140 174 L150 170"/></g>
+<clipPath id="bg1"><path d="M260 212 H304 L299 288 Q298.5 290 296 290 H268 Q265.5 290 265 288 Z"/></clipPath><g clip-path="url(#bg1)" stroke="#000" stroke-width="8" stroke-linecap="round"><path d="M256 236 Q272 230 282 236 T310 234"/><path d="M256 250 Q272 244 282 250 T310 248"/><path d="M256 264 Q272 258 282 264 T310 262"/><path d="M256 278 Q272 272 282 278 T310 276"/></g><path d="M262 224 Q267 228 272 224 T282 224 T292 224 T302 224" fill="none" stroke="#000" stroke-width="2"/><path d="M260 212 H304 L299 288 Q298.5 290 296 290 H268 Q265.5 290 265 288 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<clipPath id="bg2"><path d="M330 212 H374 L369 288 Q368.5 290 366 290 H338 Q335.5 290 335 288 Z"/></clipPath><path d="M332 224 Q337 228 342 224 T352 224 T362 224 T372 224" fill="none" stroke="#000" stroke-width="2"/><path d="M330 212 H374 L369 288 Q368.5 290 366 290 H338 Q335.5 290 335 288 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<clipPath id="bg3"><path d="M400 212 H444 L439 288 Q438.5 290 436 290 H408 Q405.5 290 405 288 Z"/></clipPath><g clip-path="url(#bg3)" stroke="#000" stroke-width="6" stroke-linecap="round"><path d="M396 264 Q412 258 422 264 T450 262"/><path d="M396 278 Q412 272 422 278 T450 276"/></g><path d="M402 224 Q407 228 412 224 T422 224 T432 224 T442 224" fill="none" stroke="#000" stroke-width="2"/><path d="M400 212 H444 L439 288 Q438.5 290 436 290 H408 Q405.5 290 405 288 Z" fill="none" stroke="#000" stroke-width="2.5" stroke-linejoin="round"/>
+<g fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+<rect x="20" y="290" width="520" height="14" fill="#000"/>
+<path d="M36 304 V384 H524 V304"/>
+<path d="M100 304 V384 M164 304 V384 M228 304 V384 M292 304 V384 M356 304 V384 M420 304 V384 M484 304 V384" stroke-width="1.5"/>
+</g>
+</svg>
+    </div>
+
+    <div class="card">
+      <form data-form="pub" novalidate>
+        <h3>Apply for the pilot</h3>
+        <p class="sub">Takes a minute. We'll reply by email.</p>
+        <div class="fields">
+          <div class="field"><label for="venue">Venue name</label><input id="venue" type="text" autocomplete="organization" required><p class="err" id="venue-err" hidden>Add the venue's name.</p></div>
+          <div class="row2">
+            <div class="field"><label for="city">City</label><input id="city" type="text" autocomplete="address-level2" required><p class="err" id="city-err" hidden>Add the city.</p></div>
+            <div class="field"><label for="taps">Beers on tap</label><input id="taps" type="number" min="1" inputmode="numeric"></div>
+          </div>
+          <div class="field"><label for="email">Your email</label><input id="email" type="email" autocomplete="email" required><p class="err" id="email-err" hidden>Enter an email like name@pub.com.</p></div>
+          <button type="submit" class="btn">Apply for the pilot</button>
+          <p class="small">We only use your email to talk to you about the pilot.</p>
+        </div>
+      </form>
+      <div class="done" data-done="pub" hidden tabindex="-1">
+        <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M14 25l7 7 13-15" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Application sent</h3>
+        <p>Thanks. We'll email you about next steps for the pilot.</p>
+        <button type="button" class="btn ghost sm" data-reset="pub">Send another application</button>
+      </div>
+      <form data-form="drinker" novalidate hidden>
+        <h3>Nominate your local</h3>
+        <p class="sub">One pub per nomination. Add as many as you like.</p>
+        <div class="fields">
+          <div class="field"><label for="pub">Pub or bar name</label><input id="pub" type="text" required><p class="err" id="pub-err" hidden>Add the pub's name.</p></div>
+          <div class="field"><label for="pubcity">City</label><input id="pubcity" type="text" autocomplete="address-level2" required><p class="err" id="pubcity-err" hidden>Add the city.</p></div>
+          <div class="field"><label for="demail">Your email (optional)</label><input id="demail" type="email" autocomplete="email"><p class="err" id="demail-err" hidden>Check the email, or leave it empty.</p></div>
+          <button type="submit" class="btn">Nominate this pub</button>
+          <p class="small">Leave your email and we'll tell you when your pub gets Zebra Tap.</p>
+        </div>
+      </form>
+      <div class="done" data-done="drinker" hidden tabindex="-1">
+        <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M14 25l7 7 13-15" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Pub nominated</h3>
+        <p>It's on the map. The more nominations a pub gets, the higher it goes on our list.</p>
+        <button type="button" class="btn ghost sm" data-reset="drinker">Nominate another pub</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="seam down" aria-hidden="true"><svg viewBox="0 0 1440 140" preserveAspectRatio="none">
+<path d="M0 116 C300 102 560 130 820 116 S1260 102 1440 116 L1440 141 L0 141 Z" fill="#000"/>
+<g fill="none" stroke="#000" stroke-linecap="round" vector-effect="non-scaling-stroke">
+<path d="M-10 92 C300 76 560 108 820 92 S1260 78 1450 92" stroke-width="20" vector-effect="non-scaling-stroke"/>
+<path d="M-10 66 C260 52 600 82 860 66 S1240 54 1450 66" stroke-width="13" vector-effect="non-scaling-stroke"/>
+<path d="M-10 43 C320 30 560 58 800 43 S1280 32 1450 43" stroke-width="7" vector-effect="non-scaling-stroke"/>
+<path d="M-10 24 C280 14 620 36 880 24 S1220 14 1450 24" stroke-width="3" vector-effect="non-scaling-stroke"/>
+</g></svg></div>
+<div class="dark">
+<footer class="wrap">
+  <div>
+    <div class="flogo"><svg class="mark" viewBox="0 0 694 752" aria-hidden="true"><use href="#zt-logo"/></svg><span class="wordmark">ZEBRA TAP</span></div>
+    <p>A student venture from ESSEC Business School, Paris. Please drink responsibly.</p>
+  </div>
+  <nav aria-label="Footer">
+    <a href="https://www.instagram.com/zebra.tap/" target="_blank" rel="noopener">Instagram</a>
+    <a href="mailto:hello@example.com">[CONTACT EMAIL]</a>
+  </nav>
+</footer>
+</div>
+
+<script>
+(function(){
+  var NS='http://www.w3.org/2000/svg';
+  var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Intro
+  var intro=document.getElementById('intro');
+  if(intro){
+    var isvg=document.getElementById('introSvg');
+    for(var i=0;i<15;i++){
+      var s=-260+i*50,p=document.createElementNS(NS,'path');
+      p.setAttribute('d','M '+s+' -20 C '+(s+110)+' 70 '+(s+120)+' 170 '+(s+260)+' 280');
+      p.setAttribute('class','draw');p.setAttribute('stroke',i%3===2?'#A3A39F':'#000');
+      p.style.animationDelay=(i*18)+'ms';isvg.appendChild(p);
+    }
+    var b=document.createElementNS(NS,'path');b.setAttribute('class','bottle');
+    b.setAttribute('d','M208 34L232 34L232 72C232 84 256 92 256 118L256 214C256 222 250 228 242 228L198 228C190 228 184 222 184 214L184 118C184 92 208 84 208 72Z');
+    isvg.appendChild(b);
+    var endIntro=function(){if(intro.parentNode)intro.parentNode.removeChild(intro);};
+    setTimeout(endIntro,1700);
+    document.getElementById('skip').addEventListener('click',endIntro);
+    document.addEventListener('keydown',function(e){if(e.key==='Escape')endIntro();});
+  }
+
+  // Pint stripes (a periodic wave, so the drift loops seamlessly)
+  var g=document.getElementById('stripes'),stripes=[],N=11;
+  for(var k=0;k<N;k++){
+    var y=96+k*34,d='M -300 '+y+' Q -262.5 '+(y-14)+' -225 '+y;
+    for(var x=-150;x<=600;x+=75)d+=' T '+x+' '+y;
+    var sp=document.createElementNS(NS,'path');sp.setAttribute('d',d);sp.setAttribute('class','stripe');
+    g.appendChild(sp);stripes.push(sp);
+  }
+
+  var abvEl=document.getElementById('abv'),wordEl=document.getElementById('abvWord'),big=document.getElementById('bignum'),live=document.getElementById('live'),hint=document.getElementById('hint');
+  var segBtns=[].slice.call(document.querySelectorAll('#strength button'));
+  var liveTimer;
+  function setT(t){
+    t=Math.max(0,Math.min(1,t));
+    for(var i=0;i<N;i++){
+      var local=Math.max(0,Math.min(1,t*1.6-(1-i/(N-1))*0.6));
+      stripes[i].style.strokeWidth=(24*local).toFixed(2)+'px';
+    }
+    var abv=(5*t).toFixed(1);
+    abvEl.textContent=abv+'%';
+    big.textContent=abv;
+    wordEl.textContent=t<=0.005?'Same 5.0% lager keg, poured alcohol-free.':(t>=0.995?'Same 5.0% lager keg, poured at full strength.':'Same 5.0% lager keg, poured at '+abv+'%.');
+    segBtns.forEach(function(bt){bt.setAttribute('aria-pressed',String(Math.abs(+bt.dataset.t-t)<0.04));});
+    clearTimeout(liveTimer);
+    liveTimer=setTimeout(function(){live.textContent='Pint poured at '+abv+'%.';},500);
+  }
+
+  // Scroll-linked pour on large screens: the pint drains as the hero scrolls away.
+  // Nothing is pinned, so scrolling the page is never slowed down.
+  var stick=document.getElementById('heroStick');
+  var mq=window.matchMedia('(min-width: 761px) and (min-height: 640px)');
+  var scrollMode=false,manual=false,ticking=false,root=document.documentElement;
+  function progress(){return Math.max(0,Math.min(1,window.scrollY/(stick.offsetHeight*0.6)));}
+  function onScroll(){
+    if(!scrollMode||ticking)return;ticking=true;
+    requestAnimationFrame(function(){
+      ticking=false;
+      if(manual&&window.scrollY<4){manual=false;root.classList.remove('manual');}
+      if(!manual)setT(1-progress());
+    });
+  }
+  function applyMode(){
+    scrollMode=!reduce&&mq.matches;
+    root.classList.toggle('scrollmode',scrollMode);
+    hint.textContent=scrollMode?'Scroll down to pour it to 0.0, or pick a strength.':'Black stripes are the alcohol. Pick how many you want.';
+    manual=false;root.classList.remove('manual');
+    if(scrollMode)setT(1-progress());else setT(0.5);
+  }
+  window.addEventListener('scroll',onScroll,{passive:true});
+  if(mq.addEventListener)mq.addEventListener('change',applyMode);
+  segBtns.forEach(function(bt){
+    bt.addEventListener('click',function(){
+      if(scrollMode){manual=true;root.classList.add('manual');}
+      setT(+bt.dataset.t);
+    });
+  });
+  applyMode();
+
+  // Pub / drinker mode and forms
+  var state={mode:'pub',sent:{pub:false,drinker:false}};
+  function render(){
+    document.querySelectorAll('[data-mode-btn]').forEach(function(bt){bt.setAttribute('aria-pressed',String(bt.dataset.modeBtn===state.mode));});
+    document.querySelectorAll('.pitch').forEach(function(el){el.hidden=el.dataset.for!==state.mode;});
+    ['pub','drinker'].forEach(function(m){
+      var on=m===state.mode;
+      document.querySelector('[data-form="'+m+'"]').hidden=!on||state.sent[m];
+      document.querySelector('[data-done="'+m+'"]').hidden=!on||!state.sent[m];
+    });
+  }
+  function setMode(m){state.mode=m;render();}
+  document.querySelectorAll('[data-mode-btn]').forEach(function(bt){bt.addEventListener('click',function(){setMode(bt.dataset.modeBtn);});});
+  document.querySelectorAll('a[data-mode]').forEach(function(a){a.addEventListener('click',function(){setMode(a.dataset.mode);});});
+  var emailOk=function(v){return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);};
+  document.querySelectorAll('form[data-form]').forEach(function(f){
+    f.addEventListener('submit',function(e){
+      e.preventDefault();
+      var ok=true,first=null;
+      f.querySelectorAll('input').forEach(function(inp){
+        var v=inp.value.trim(),good=true;
+        if(inp.required&&!v)good=false;
+        if(inp.type==='email'&&v&&!emailOk(v))good=false;
+        var err=document.getElementById(inp.id+'-err');
+        inp.setAttribute('aria-invalid',String(!good));
+        if(err){err.hidden=good;if(!good)inp.setAttribute('aria-describedby',err.id);else inp.removeAttribute('aria-describedby');}
+        if(!good&&!first)first=inp;ok=ok&&good;
+      });
+      if(!ok){first.focus();return;}
+      state.sent[f.dataset.form]=true;f.reset();render();
+      document.querySelector('[data-done="'+f.dataset.form+'"]').focus();
+    });
+  });
+  document.querySelectorAll('[data-reset]').forEach(function(bt){
+    bt.addEventListener('click',function(){state.sent[bt.dataset.reset]=false;render();document.querySelector('[data-form="'+bt.dataset.reset+'"] input').focus();});
+  });
+  render();
+})();
+</script>
+</body>
+</html>
