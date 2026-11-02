@@ -5,12 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Zebra Tap: your usual pint, any strength</title>
 <meta name="description" content="Zebra Tap takes the alcohol out at the tap, so pubs can pour every beer at full strength, halfway, or 0.0 from one keg.">
-<link rel="canonical" href="https://loganw06.github.io/zebratap/">
+<link rel="canonical" href="https://zebratap.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Zebra Tap: your usual pint, any strength">
 <meta property="og:description" content="A draught add-on that pours any beer on tap at 0.0, halfway or full strength. Looking for our first 10 pilot bars in Paris.">
-<meta property="og:url" content="https://loganw06.github.io/zebratap/">
-<meta property="og:image" content="https://loganw06.github.io/zebratap/og.png">
+<meta property="og:url" content="https://zebratap.github.io/">
+<meta property="og:image" content="https://zebratap.github.io/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
@@ -249,6 +249,25 @@ footer nav{display:flex;gap:28px;font-size:15px}
   .ig svg.art{order:-1;max-width:360px}
   .ig .btn{width:100%}
   footer{flex-direction:column}
+  .hero h1{font-size:clamp(44px,15vw,62px)}
+  .feel{font-size:24px;margin-top:20px}
+  .bignum{display:none}
+  .glass{height:300px}
+  .why .striped{font-size:clamp(56px,17vw,76px);background:none;-webkit-text-fill-color:var(--ink);color:var(--ink)}
+  h2.display{font-size:clamp(36px,10.5vw,44px)}
+  .table-wrap{overflow:visible}
+  table{min-width:0}
+  thead{display:none}
+  table,tbody,tr,th,td{display:block;width:100%}
+  tbody tr{border:1px solid var(--rule);border-radius:6px;margin-bottom:14px;overflow:hidden}
+  tbody th{width:100%;padding:14px 16px 10px;border:0;font-size:15px;color:var(--mute)}
+  td{display:grid;grid-template-columns:118px minmax(0,1fr);gap:12px;padding:10px 16px;border:0;border-top:1px solid var(--rule)}
+  td::before{content:attr(data-label);font-size:14px;font-weight:600;color:var(--mute)}
+  td.zt-col::before{color:#BDBDB9}
+  .zt-col + th,.zt-col + td{padding-left:16px}
+  tbody tr:last-child .zt-col{border-bottom:0}
+  footer nav a,footer p a{display:inline-flex;align-items:center;min-height:44px}
+  .logo{min-height:44px}
 }
 </style>
 </head>
@@ -404,11 +423,11 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
       <table>
         <thead><tr><th scope="col"><span class="sr">Feature</span></th><th scope="col" class="zt-col">ZEBRA TAP</th><th scope="col">Draught 0.0 brands</th><th scope="col">Bottled 0.0</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Alcohol-free options</th><td class="zt-col">Every beer on tap</td><td>One beer per tap line</td><td>Whatever is in the fridge</td></tr>
-          <tr><th scope="row">Served as</th><td class="zt-col">Fresh draught</td><td>Draught</td><td>Bottle or can</td></tr>
-          <tr><th scope="row">Strengths</th><td class="zt-col">0.0, halfway or full</td><td>0.0 only</td><td>0.0 only</td></tr>
-          <tr><th scope="row">Extra stock for the pub</th><td class="zt-col">None, it uses the kegs you have</td><td>A separate keg and tap line for each</td><td>Fridge space and stock that goes out of date</td></tr>
-          <tr><th scope="row">In the glass</th><td class="zt-col">The same beer as your friends</td><td>A different beer from your friends'</td><td>Clearly a different drink</td></tr>
+          <tr><th scope="row">Alcohol-free options</th><td data-label="Zebra Tap" class="zt-col">Every beer on tap</td><td data-label="Draught 0.0 brands">One beer per tap line</td><td data-label="Bottled 0.0">Whatever is in the fridge</td></tr>
+          <tr><th scope="row">Served as</th><td data-label="Zebra Tap" class="zt-col">Fresh draught</td><td data-label="Draught 0.0 brands">Draught</td><td data-label="Bottled 0.0">Bottle or can</td></tr>
+          <tr><th scope="row">Strengths</th><td data-label="Zebra Tap" class="zt-col">0.0, halfway or full</td><td data-label="Draught 0.0 brands">0.0 only</td><td data-label="Bottled 0.0">0.0 only</td></tr>
+          <tr><th scope="row">Extra stock for the pub</th><td data-label="Zebra Tap" class="zt-col">None, it uses the kegs you have</td><td data-label="Draught 0.0 brands">A separate keg and tap line for each</td><td data-label="Bottled 0.0">Fridge space and stock that goes out of date</td></tr>
+          <tr><th scope="row">In the glass</th><td data-label="Zebra Tap" class="zt-col">The same beer as your friends</td><td data-label="Draught 0.0 brands">A different beer from your friends'</td><td data-label="Bottled 0.0">Clearly a different drink</td></tr>
         </tbody>
       </table>
     </div>
