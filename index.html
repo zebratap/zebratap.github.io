@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Zebra Tap: your usual pint, any strength</title>
 <meta name="description" content="Zebra Tap takes the alcohol out at the tap, so pubs can pour every beer at full strength, halfway, or 0.0 from one keg.">
+<link rel="canonical" href="https://loganw06.github.io/zebratap/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Zebra Tap: your usual pint, any strength">
+<meta property="og:description" content="A draught add-on that pours any beer on tap at 0.0, halfway or full strength. Looking for our first 10 pilot bars in Paris.">
+<meta property="og:url" content="https://loganw06.github.io/zebratap/">
+<meta property="og:image" content="https://loganw06.github.io/zebratap/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="favicon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Hanken+Grotesk:wght@400;500;600;700&display=swap">
@@ -27,7 +37,7 @@ html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + var(--head));backgro
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 svg{max-width:100%}
 a{color:var(--ink)}a:hover{color:var(--mute)}
-button,input{font:inherit}
+button,input,select,textarea{font:inherit}
 :focus-visible{outline:3px solid var(--ink);outline-offset:3px}
 .dark :focus-visible{outline-color:var(--paper)}
 .display{font-family:var(--display);font-weight:800;line-height:.92;margin:0}
@@ -137,14 +147,6 @@ thead .zt-col{font-family:var(--display);font-weight:800;font-size:26px;letter-s
 tbody tr:last-child .zt-col{border-bottom-color:var(--ink)}
 .zt-col + th, .zt-col + td{padding-left:28px}
 
-/* Markets */
-.markets{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:40px;margin-top:64px}
-.market{border-top:1px solid var(--dline);padding-top:22px}
-.market h3{margin:0 0 14px;font-size:15px;font-weight:600;color:var(--soft)}
-.market .n{font-family:var(--display);font-weight:800;font-size:clamp(52px,5vw,72px);line-height:1}
-.market p{margin:12px 0 8px;font-size:17px;line-height:1.5}
-.caveat{margin:40px 0 0;font-size:14px;color:var(--faint)}
-
 /* Join */
 .joinrule{border-top:1px solid var(--rule);margin-left:var(--pad);margin-right:var(--pad);padding-left:0;padding-right:0}
 .join{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,560px);gap:88px;align-items:start}
@@ -162,8 +164,13 @@ tbody tr:last-child .zt-col{border-bottom-color:var(--ink)}
 .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
 .field{display:grid;gap:8px}
 .field label{font-size:15px;font-weight:600}
-.field input{height:52px;width:100%;padding:0 16px;font-size:17px;border:1.5px solid var(--field);border-radius:4px;background:var(--paper);color:var(--ink);-webkit-appearance:none;appearance:none}
-.field input:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 2px var(--ink)}
+.field textarea{width:100%;padding:14px 16px;font-size:17px;line-height:1.5;border:1.5px solid var(--field);border-radius:4px;background:var(--paper);color:var(--ink);resize:vertical;-webkit-appearance:none;appearance:none}
+.field textarea:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 2px var(--ink)}
+.field textarea[aria-invalid="true"]{border-color:#B3261E}
+.contact{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,560px);gap:88px;align-items:start}
+.field input,.field select{height:52px;width:100%;padding:0 16px;font-size:17px;border:1.5px solid var(--field);border-radius:4px;background:var(--paper);color:var(--ink);-webkit-appearance:none;appearance:none}
+.field select{background-image:linear-gradient(45deg,transparent 50%,#000 50%),linear-gradient(135deg,#000 50%,transparent 50%);background-position:calc(100% - 22px) 23px,calc(100% - 16px) 23px;background-size:6px 6px;background-repeat:no-repeat;padding-right:40px;cursor:pointer}
+.field input:focus,.field select:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 2px var(--ink)}
 .field input[aria-invalid="true"]{border-color:#B3261E}
 .err{margin:0;font-size:14px;color:#B3261E}
 .card .btn{width:100%;margin-top:4px}
@@ -204,7 +211,8 @@ footer nav{display:flex;gap:28px;font-size:15px}
 @media (max-width:1080px){
   :root{--pad:40px}
   .hero-stick{grid-template-columns:minmax(0,1fr) auto;gap:32px}
-  .stats,.why,.join,.ig{grid-template-columns:minmax(0,1fr)}
+  .stats,.why,.join,.ig,.contact{grid-template-columns:minmax(0,1fr)}
+  .contact{gap:40px}
   .stats{gap:48px}
   .why{gap:32px}
   .join{gap:48px}
@@ -322,7 +330,7 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
 </g></svg></div>
   <section id="how" class="block dark wrap" aria-labelledby="how-title">
     <h2 id="how-title" class="display">One keg. Two ways out of the tap.</h2>
-    <p class="intro-p">The unit fits in the line between keg and tap. Nothing changes about how the beer is brewed, delivered or stored.</p>
+    <p class="intro-p">The unit fits in the line between keg and tap and plugs into the bar's existing pump and gas. Nothing changes about how the beer is brewed, delivered or stored.</p>
     <svg class="diag wide" viewBox="0 0 1200 460" role="img" aria-label="Diagram: beer flows from your usual keg to a valve. Route 1 goes straight to the tap at full strength. Route 2 goes through the Zebra Tap unit, which takes the alcohol out, adds back water and CO2, and corrects the flavour, then goes to the same tap. Out comes one fresh draught pint.">
 <g fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
 <rect x="40" y="170" width="120" height="150" rx="16"/><path d="M40 205 H160 M40 285 H160"/><path d="M84 170 V156 H116 V170"/>
@@ -415,16 +423,16 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
 <path d="M-10 24 C280 14 620 36 880 24 S1220 14 1450 24" stroke-width="3" vector-effect="non-scaling-stroke"/>
 </g></svg></div>
   <section id="problem" class="block dark wrap" aria-labelledby="problem-title">
-    <h2 id="problem-title" class="display">Why it matters at the bar.</h2>
-    <p class="intro-p">At most pubs, the 0.0 option is a bottle from the back fridge. People notice, and so do the pub's takings.</p>
+    <h2 id="problem-title" class="display">No alcohol-free version of the beer everyone else is drinking.</h2>
+    <p class="intro-p">At most bars, the 0.0 option is a bottle from the fridge, or one alcohol-free beer on tap at best. People notice. So does the till: guests order a Coke, or leave early.</p>
     <div class="stats">
       <div class="hero-stat">
-        <div class="n">About half</div>
-        <p>of occasional no/low drinkers sometimes order alcohol anyway, just to avoid being judged.</p>
-        <small class="src">Heineken UK and University of Oxford study</small>
+        <div class="n">36.4%</div>
+        <p>of the occasional no/low drinkers we interviewed sometimes order alcohol, just to avoid being judged.</p>
+        <small class="src">Zebra Tap interviews, Paris, September to October 2026</small>
       </div>
       <div class="side-stats">
-        <div class="fact"><div class="n">31%</div><p>of UK consumers have left a venue disappointed by its low and no-alcohol choice. That's a round, and often a whole night, the pub loses.</p><small class="src">UK consumer research, via trade press</small></div>
+        <div class="fact"><div class="n">51.5%</div><p>of the people we interviewed are almost never satisfied with the alcohol-free choice at the bar.</p><small class="src">Zebra Tap interviews, Paris, September to October 2026</small></div>
       </div>
     </div>
   </section>
@@ -442,7 +450,7 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
     <div class="why">
       <p class="striped" aria-hidden="true">Zebra striping</p>
       <div>
-        <p><strong>Zebra striping</strong> is something people already do: alternate a beer with an alcohol-free drink through the night. It's one of the drinking habits growing fastest in France.</p>
+        <p><strong>Zebra striping</strong> is something people already do: alternate a beer with an alcohol-free drink through the night. It's a growing habit in France.</p>
         <p>The name comes from that. Black stripes for the rounds with alcohol, white stripes for the ones without.</p>
       </div>
     </div>
@@ -465,12 +473,12 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
         <button type="button" aria-pressed="false" data-mode-btn="drinker">I drink at one</button>
       </div>
       <div class="pitch" data-for="pub">
-        <p>We're looking for our first 10 pilot venues. You keep your kegs, your breweries and your tap lines. We install the unit and look after it.</p>
-        <ul class="ticks"><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Every beer you pour gets a 0.0 version</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>No separate alcohol-free kegs taking up cellar space</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>No slow-selling 0.0 stock going out of date</span></li></ul>
+        <p>We're looking for our first 10 pilot bars in Paris. The pilot is free for three months, with no upfront cost. You keep your kegs, your breweries and your tap lines. We install, clean and maintain the unit.</p>
+        <ul class="ticks"><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>More rounds per table: every guest can order every round</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Groups stay longer, because nobody has to switch to a Coke</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Zero 0.0 waste: no extra kegs, tap lines or fridge stock</span></li></ul>
       </div>
       <div class="pitch" data-for="drinker" hidden>
-        <p>Tell us where you drink. Every nomination goes on our map of pubs people want Zebra Tap in, and we take that list to the pub.</p>
-        <ul class="ticks"><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Order the same beer as your friends, at the strength you want</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>A fresh draught pint instead of a bottle from the fridge</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Zebra-stripe your night without switching drinks</span></li></ul>
+        <p>Tell us where you drink. We count every nomination and take the list to the bars people want Zebra Tap in.</p>
+        <ul class="ticks"><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>The same glass as your friends</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Stay for every round, at the strength you choose</span></li><li><svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><path d="M4 11.5 9 16 18 6" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Wake up fine</span></li></ul>
       </div>
       <svg class="scene" viewBox="0 0 560 390" role="img" aria-label="Line drawing of a pub bar: a tap tower, three pints on the counter at different strengths, and a chalkboard that reads Every beer, any strength.">
 <g fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -506,12 +514,13 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
         <h3>Apply for the pilot</h3>
         <p class="sub">Takes a minute. We'll reply by email.</p>
         <div class="fields">
-          <div class="field"><label for="venue">Venue name</label><input id="venue" type="text" autocomplete="organization" required><p class="err" id="venue-err" hidden>Add the venue's name.</p></div>
+          <div class="field"><label for="venue">Venue name</label><input id="venue" name="venue" type="text" autocomplete="organization" required><p class="err" id="venue-err" hidden>Add the venue's name.</p></div>
           <div class="row2">
-            <div class="field"><label for="city">City</label><input id="city" type="text" autocomplete="address-level2" required><p class="err" id="city-err" hidden>Add the city.</p></div>
-            <div class="field"><label for="taps">Beers on tap</label><input id="taps" type="number" min="1" inputmode="numeric"></div>
+            <div class="field"><label for="city">City</label><input id="city" name="city" type="text" autocomplete="address-level2" required><p class="err" id="city-err" hidden>Add the city.</p></div>
+            <div class="field"><label for="taps">How many beers on tap?</label><select id="taps" name="beers_on_tap"><option value="">Choose</option><option>1 to 4</option><option>5 to 9</option><option>10 or more</option></select></div>
           </div>
-          <div class="field"><label for="email">Your email</label><input id="email" type="email" autocomplete="email" required><p class="err" id="email-err" hidden>Enter an email like name@pub.com.</p></div>
+          <div class="field"><label for="email">Your email</label><input id="email" name="email" type="email" autocomplete="email" required><p class="err" id="email-err" hidden>Enter an email like name@pub.com.</p></div>
+          <p class="err" data-send-err hidden>That didn't send. Try again, or email us.</p>
           <button type="submit" class="btn">Apply for the pilot</button>
           <p class="small">We only use your email to talk to you about the pilot.</p>
         </div>
@@ -519,16 +528,17 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
       <div class="done" data-done="pub" hidden tabindex="-1">
         <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M14 25l7 7 13-15" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <h3>Application sent</h3>
-        <p>Thanks. We'll email you about next steps for the pilot.</p>
+        <p>Thanks. Someone from the team will email you about the pilot.</p>
         <button type="button" class="btn ghost sm" data-reset="pub">Send another application</button>
       </div>
       <form data-form="drinker" novalidate hidden>
         <h3>Nominate your local</h3>
         <p class="sub">One pub per nomination. Add as many as you like.</p>
         <div class="fields">
-          <div class="field"><label for="pub">Pub or bar name</label><input id="pub" type="text" required><p class="err" id="pub-err" hidden>Add the pub's name.</p></div>
-          <div class="field"><label for="pubcity">City</label><input id="pubcity" type="text" autocomplete="address-level2" required><p class="err" id="pubcity-err" hidden>Add the city.</p></div>
-          <div class="field"><label for="demail">Your email (optional)</label><input id="demail" type="email" autocomplete="email"><p class="err" id="demail-err" hidden>Check the email, or leave it empty.</p></div>
+          <div class="field"><label for="pub">Pub or bar name</label><input id="pub" name="pub" type="text" required><p class="err" id="pub-err" hidden>Add the pub's name.</p></div>
+          <div class="field"><label for="pubcity">City</label><input id="pubcity" name="city" type="text" autocomplete="address-level2" required><p class="err" id="pubcity-err" hidden>Add the city.</p></div>
+          <div class="field"><label for="demail">Your email (optional)</label><input id="demail" name="email" type="email" autocomplete="email"><p class="err" id="demail-err" hidden>Check the email, or leave it empty.</p></div>
+          <p class="err" data-send-err hidden>That didn't send. Try again, or email us.</p>
           <button type="submit" class="btn">Nominate this pub</button>
           <p class="small">Leave your email and we'll tell you when your pub gets Zebra Tap.</p>
         </div>
@@ -536,8 +546,34 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
       <div class="done" data-done="drinker" hidden tabindex="-1">
         <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M14 25l7 7 13-15" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
         <h3>Pub nominated</h3>
-        <p>It's on the map. The more nominations a pub gets, the higher it goes on our list.</p>
+        <p>Thanks. The more nominations a bar gets, the higher it goes on our list.</p>
         <button type="button" class="btn ghost sm" data-reset="drinker">Nominate another pub</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="block contact wrap joinrule" aria-labelledby="contact-title">
+    <div>
+      <h2 id="contact-title" class="display">Questions? Write to us.</h2>
+      <p class="intro-p">Breweries, distributors, bars, or just curious. Leave a message and the team will get back to you. You can also message us on <a href="https://www.instagram.com/zebra.tap/" target="_blank" rel="noopener">Instagram</a>.</p>
+    </div>
+    <div class="card">
+      <form data-form="contact" novalidate>
+        <div class="fields">
+          <div class="row2">
+            <div class="field"><label for="cname">Your name</label><input id="cname" name="name" type="text" autocomplete="name" required><p class="err" id="cname-err" hidden>Add your name.</p></div>
+            <div class="field"><label for="cemail">Your email</label><input id="cemail" name="email" type="email" autocomplete="email" required><p class="err" id="cemail-err" hidden>Enter an email like name@mail.com.</p></div>
+          </div>
+          <div class="field"><label for="cmsg">Message</label><textarea id="cmsg" name="message" rows="5" required></textarea><p class="err" id="cmsg-err" hidden>Write a message.</p></div>
+          <p class="err" data-send-err hidden>That didn't send. Try again in a moment.</p>
+          <button type="submit" class="btn">Send message</button>
+        </div>
+      </form>
+      <div class="done" data-done="contact" hidden tabindex="-1">
+        <svg width="48" height="48" viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="22"/><path d="M14 25l7 7 13-15" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Message sent</h3>
+        <p>Thanks. Someone from the team will get back to you.</p>
+        <button type="button" class="btn ghost sm" data-reset="contact">Send another message</button>
       </div>
     </div>
   </section>
@@ -559,13 +595,17 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
   </div>
   <nav aria-label="Footer">
     <a href="https://www.instagram.com/zebra.tap/" target="_blank" rel="noopener">Instagram</a>
-    <a href="mailto:hello@example.com">[CONTACT EMAIL]</a>
+    <a href="#contact">Contact us</a>
   </nav>
 </footer>
 </div>
 
 <script>
 (function(){
+  // ===== Settings =====
+  // Formspree form ID from formspree.io (the part after /f/). Leave empty and forms only show the thank-you screen.
+  var FORMSPREE_ID = '';
+  // ====================
   var NS='http://www.w3.org/2000/svg';
   var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -647,7 +687,7 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
   applyMode();
 
   // Pub / drinker mode and forms
-  var state={mode:'pub',sent:{pub:false,drinker:false}};
+  var state={mode:'pub',sent:{pub:false,drinker:false,contact:false}};
   function render(){
     document.querySelectorAll('[data-mode-btn]').forEach(function(bt){bt.setAttribute('aria-pressed',String(bt.dataset.modeBtn===state.mode));});
     document.querySelectorAll('.pitch').forEach(function(el){el.hidden=el.dataset.for!==state.mode;});
@@ -656,6 +696,8 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
       document.querySelector('[data-form="'+m+'"]').hidden=!on||state.sent[m];
       document.querySelector('[data-done="'+m+'"]').hidden=!on||!state.sent[m];
     });
+    document.querySelector('[data-form="contact"]').hidden=state.sent.contact;
+    document.querySelector('[data-done="contact"]').hidden=!state.sent.contact;
   }
   function setMode(m){state.mode=m;render();}
   document.querySelectorAll('[data-mode-btn]').forEach(function(bt){bt.addEventListener('click',function(){setMode(bt.dataset.modeBtn);});});
@@ -665,7 +707,7 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
     f.addEventListener('submit',function(e){
       e.preventDefault();
       var ok=true,first=null;
-      f.querySelectorAll('input').forEach(function(inp){
+      f.querySelectorAll('input,select,textarea').forEach(function(inp){
         var v=inp.value.trim(),good=true;
         if(inp.required&&!v)good=false;
         if(inp.type==='email'&&v&&!emailOk(v))good=false;
@@ -675,12 +717,26 @@ if(seen||reduce){var el=document.getElementById('intro');el.parentNode.removeChi
         if(!good&&!first)first=inp;ok=ok&&good;
       });
       if(!ok){first.focus();return;}
-      state.sent[f.dataset.form]=true;f.reset();render();
-      document.querySelector('[data-done="'+f.dataset.form+'"]').focus();
+      var sendErr=f.querySelector('[data-send-err]'),btn=f.querySelector('button[type="submit"]');
+      function finish(){state.sent[f.dataset.form]=true;f.reset();render();document.querySelector('[data-done="'+f.dataset.form+'"]').focus();}
+      if(!FORMSPREE_ID){finish();return;}
+      var data=new FormData(f);data.append('form',{pub:'Pilot application',drinker:'Pub nomination',contact:'Contact message'}[f.dataset.form]);
+      sendErr.hidden=true;btn.disabled=true;var label=btn.textContent;btn.textContent='Sending...';
+      fetch('https://formspree.io/f/'+FORMSPREE_ID,{method:'POST',body:data,headers:{'Accept':'application/json'}})
+        .then(function(r){if(!r.ok)throw new Error('send');finish();})
+        .catch(function(){sendErr.hidden=false;})
+        .then(function(){btn.disabled=false;btn.textContent=label;});
+    });
+  });
+  document.querySelectorAll('form[data-form] input,form[data-form] textarea').forEach(function(inp){
+    inp.addEventListener('input',function(){
+      if(inp.getAttribute('aria-invalid')==='true'&&inp.value.trim()&&(inp.type!=='email'||emailOk(inp.value.trim()))){
+        inp.setAttribute('aria-invalid','false');var e=document.getElementById(inp.id+'-err');if(e)e.hidden=true;inp.removeAttribute('aria-describedby');
+      }
     });
   });
   document.querySelectorAll('[data-reset]').forEach(function(bt){
-    bt.addEventListener('click',function(){state.sent[bt.dataset.reset]=false;render();document.querySelector('[data-form="'+bt.dataset.reset+'"] input').focus();});
+    bt.addEventListener('click',function(){state.sent[bt.dataset.reset]=false;render();document.querySelector('[data-form="'+bt.dataset.reset+'"]').querySelector('input,textarea').focus();});
   });
   render();
 })();
